@@ -1,0 +1,59 @@
+<html>
+	<head>
+		<meta charset='utf-8'>
+		<title>Тестовая версия</title>
+		<link rel=stylesheet href='css/style.css'/>
+		<script src='js/jquery-3.2.1.min.js'></script>
+	</head>
+	<body>
+	<canvas id='cvs' width = 500px height = 700px></canvas>
+	<div id='map'>
+		<label id='startLabel'>
+			<input name='coord' type='radio' id='startRadio' onclick='draw(id)'/>
+			Старт
+		</label>
+		<input name='coord' type='radio' id='room1' onclick='draw(id)'/>
+		<input name='coord' type='radio' id='room2' onclick='draw(id)'/>
+		<input name='coord' type='radio' id='room3' onclick='draw(id)'/>
+	</div>
+	<script>
+		$('#map').offset({top:0, left:($(document).width() - $('#map').width())/2});
+		$('#cvs').offset($('#map').offset());
+		console.log($(document).width());
+		console.log(($(document).width() - $('#map').width())/2);
+	</script>
+	<script>
+		function draw(id){
+			var startX = parseInt($('#startLabel').position().left);
+			var startY = parseInt($('#startLabel').position().top);
+			$.ajax({
+			  type:'POST',
+			  url:'coord.php',
+			  data:'id='+id,
+			  success:function(data){
+				var result = jQuery.parseJSON(data);
+				var canvas = document.getElementById("cvs");
+				var ctx = canvas.getContext("2d"); 
+				ctx.clearRect(0, 0, canvas.width, canvas.height);
+				result.forEach(function(item, i) {
+					var x = item[0];
+					var y = item[1];
+						
+					ctx.beginPath();
+					ctx.lineWidth = 0.7;
+					ctx.strokeStyle = 'green';
+					
+					ctx.moveTo(startX+12, startY+10);
+					ctx.lineTo(x+12, y+10);
+					ctx.closePath();
+					ctx.stroke();
+					startX = x;
+					startY = y;
+				});
+			  }
+			});
+			
+		}
+	</script>
+	</body>
+</html>
